@@ -109,7 +109,7 @@ public class ExportToExcel {
         }
 
         String fileName = getXLSXStr().toString();
-        String name = "C:/app_pay/excel/" + fileName + ".xlsx";
+        String name = "/usr/local/server/excel/" + fileName + ".xlsx";
         File file = new File(name);
         try {
             file.createNewFile();

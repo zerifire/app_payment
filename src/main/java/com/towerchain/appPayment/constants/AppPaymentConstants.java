@@ -13,7 +13,7 @@ public interface AppPaymentConstants {
     String APP_WEIXIN_REFUND_QUERY_URL = APP_WEIXIN_APY_URL + "pay/refundquery";  //查询退款信息
     String APP_WEIXIN_DOWNLOAD_BILL_URL = APP_WEIXIN_APY_URL + "pay/downloadbill";  // 下载对账信息
     String APP_WEIXIN_BATCH_QUERY_COMMENT_URL = APP_WEIXIN_APY_URL + "billcommentsp/batchquerycomment"; //拉取订单评价数据
-    String APP_WEIXNI_DOWNLOAD_FUND_FLOW_URL = APP_WEIXIN_APY_URL+"pay/downloadfundflow";  //下载资金账单
+    String APP_WEIXNI_DOWNLOAD_FUND_FLOW_URL = APP_WEIXIN_APY_URL + "pay/downloadfundflow";  //下载资金账单
 
 
 }
