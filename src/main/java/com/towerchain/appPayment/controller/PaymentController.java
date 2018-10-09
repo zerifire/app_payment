@@ -3,7 +3,6 @@ package com.towerchain.appPayment.controller;
 import com.towerchain.appPayment.entity.*;
 import com.towerchain.appPayment.exception.ParamException;
 import com.towerchain.appPayment.service.impl.AppPaymentServiceImpl;
-import com.towerchain.appPayment.utils.HttpUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 
+/**
+ * 打包方式，黑窗口，进入该文件夹，
+ * 在该文件夹路径下 执行mvn clean package
+ */
 //@Controller(value = "/app/wxpay")
 @Controller
 public class PaymentController {
@@ -33,9 +36,6 @@ public class PaymentController {
     @RequestMapping(value = "/appPaymentCreateOrder", consumes = "application/json;utf-8", method = RequestMethod.POST)
     @ResponseBody
     public AppPaymentResultEntity appPaymentCreateOrder(@RequestBody AppPaymentEntity entity, HttpServletRequest request) throws Exception {
-        String ip = HttpUtil.getIpAddress(request);
-        System.out.println(ip);
-        logger.info(ip);
         return paymentService.appPaymentCreateOrder(entity, request);
     }
 
@@ -122,7 +122,6 @@ public class PaymentController {
     public void appPaymentDownloadFundFlow(@RequestBody DownloadFundFlowEntity upEntity) throws ParamException {
         paymentService.appPaymentDownloadFundFlow(upEntity);
     }
-
 
     /**
      * 微信申请退款通知（回调）

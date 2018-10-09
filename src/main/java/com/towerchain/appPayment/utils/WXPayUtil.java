@@ -21,6 +21,9 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.*;
 
+/**
+ * 微信自带工具类
+ */
 public class WXPayUtil {
 
 	private static final String SYMBOLS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -1,11 +1,9 @@
 server:
   port: 8081
-resources:
-error: /templates/error_1.html
 spring:
     datasource:
         name: test
-        url: jdbc:mysql://127.0.0.1:3306/depot
+        url: jdbc:mysql://localhost:3306/depot
         username: root
         password: 12345
         driver-class-name: com.mysql.jdbc.Driver

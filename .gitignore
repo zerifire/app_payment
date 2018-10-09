@@ -1,0 +1,33 @@
+/target/
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+mvnw.cmd
+mvnw
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/out/
+.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/maven-wrapper.jar
+.gitattributes
+src/main/java/com/towerchain/appPayment/constants/AppPaymentConstants.java
+src/main/java/com/towerchain/appPayment/mapper/
+src/main/resources/com/
+src/main/resources/static/

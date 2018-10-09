@@ -9,11 +9,8 @@ import com.towerchain.appPayment.service.ServiceBase;
 import com.towerchain.appPayment.utils.*;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 
@@ -41,9 +38,14 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
         checkParamNotNull(appPaymentEntity.getTotal_fee(), "total_fee");
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+//        随机字符串
         String nonce_str = WXPayUtil.generateNonceStr();
+//        时间戳
         long times = System.currentTimeMillis();
+//        获取请求IP地址
         String ip = HttpUtil.getIpAddress(request);
+        //TODO 测试打印logger  待删除
+        logger.info(ip);
         appPaymentEntity.setAppid(AppPaymentConstants.APP_APPID);
         appPaymentEntity.setMch_id(AppPaymentConstants.APP_MCH_ID);
         appPaymentEntity.setDevice_info("WEB");
@@ -52,6 +54,7 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
         appPaymentEntity.setDetail("您在XXXXX的消费信");
         appPaymentEntity.setAttach("上海店");
         appPaymentEntity.setOut_trade_no(nonce_str);
+        //TODO 测试打印logger  待删除
         logger.info("订单号：" + nonce_str);
         appPaymentEntity.setFee_type("CNY");
         appPaymentEntity.setSpbill_create_ip(ip);
@@ -67,26 +70,35 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
         appPaymentEntity.setScene_info(JsonUtility.obj2Json(sceneInfo));
         Map<String, String> paramMap = null;
         try {
+//            参数转换成map集合
             paramMap = JsonUtility.objToMap(appPaymentEntity);
+//            将map转换成xml并添加sign
             String data = WXPayUtil.generateSignedXml(paramMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY);
+//            发送xml请求
             String result = HttpUtil.doPostXml(AppPaymentConstants.APP_WEIXIN_UNIFIEDORDER_URL, data);
+//            xml转map
             Map<String, String> resultMap = WXPayUtil.xmlToMap(result);
             if (resultMap.get("return_code").equals("SUCCESS")) {
+//                验签
                 boolean b = WXPayUtil.isSignatureValid(resultMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY);
                 if (!b) {
                     // 验签失败
                     resultEntity.setErr_code(String.valueOf(AppPaymentErrorId.ERROR_VERIFY_SIGN_FAILED));
+                    // TODO
                 } else {
                     //将返回的结果转成对象
                     resultEntity = JsonUtility.json2Object(JsonUtility.obj2Json(resultMap), AppPaymentResultEntity.class);
                     resultEntity.setAppId(appPaymentEntity.getAppid());
                     resultEntity.setStartTime(getTimeMillis(appPaymentEntity.getTime_start()));
+                    // TODO
                 }
             } else {
                 resultEntity = JsonUtility.json2Object(JsonUtility.obj2Json(resultMap), AppPaymentResultEntity.class);
+                //TODO 测试打印logger  待删除
                 logger.info(JsonUtility.obj2Json(resultEntity));
             }
         } catch (Exception e) {
+            //TODO
             logger.error(e.getMessage());
             e.printStackTrace();
         }
@@ -102,9 +114,12 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
     @Override
     public String receiveAppPaymentMessage(HttpServletRequest request) throws IOException {
         String result = null;
+//        成功返回微信信息
         String return_success = "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
+//        失败返回
         String return_fail = "fail";
         try {
+//            获取微信传回来的参数
             result = getWXReturn(request);
             Map<String, String> resultMap = WXPayUtil.xmlToMap(result);
             AppPaymentMessageEntity entity = JsonUtility.json2Object(JsonUtility.obj2Json(resultMap), AppPaymentMessageEntity.class);
@@ -154,9 +169,11 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
                 }
             } else {
                 downEntity = JsonUtility.json2Object(JsonUtility.obj2Json(downMap), QueryOrderDownEntity.class);
+                //TODO 测试打印logger  待删除
                 logger.info(JsonUtility.obj2Json(downMap));
             }
         } catch (Exception e) {
+            //TODO
             logger.error(e.getMessage());
             e.printStackTrace();
         }
@@ -185,9 +202,11 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
             System.out.println(result);
             Map<String, String> resultMap = WXPayUtil.xmlToMap(result);
             if (WXPayUtil.isSignatureValid(resultMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY)) {
+                //TODO 测试打印logger  待删除
                 logger.info(result);
                 downEntity = JsonUtility.json2Object(JsonUtility.obj2Json(resultMap), AppPaymentResultEntity.class);
             } else {
+                //TODO 测试打印logger
                 logger.error("验签失败");
             }
         } catch (Exception e) {
@@ -220,6 +239,7 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
             Map<String, String> paramMap = JsonUtility.objToMap(upEntity);
             String paramXml = WXPayUtil.generateSignedXml(paramMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY);
             String resultXml = HttpUtil.doPostXml(AppPaymentConstants.APP_WEIXIN_REDUND_URL, paramXml);
+            //TODO 测试输出信息  待删除
             System.out.println(resultXml);
             Map<String, String> resultMap = WXPayUtil.xmlToMap(resultXml);
             if (WXPayUtil.isSignatureValid(resultMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY)) {
@@ -252,6 +272,7 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
             Map<String, String> paramMap = JsonUtility.objToMap(upEntity);
             paramXml = WXPayUtil.generateSignedXml(paramMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY);
             String resultXml = HttpUtil.doPostXml(AppPaymentConstants.APP_WEIXIN_REFUND_QUERY_URL, paramXml);
+            //TODO 测试输出  待删除
             System.out.println(resultXml);
             Map<String, String> resultMap = WXPayUtil.xmlToMap(resultXml);
             if (WXPayUtil.isSignatureValid(resultMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY)) {
@@ -283,7 +304,9 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
         try {
             String paramXml = WXPayUtil.generateSignedXml(paramMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY);
             String result = HttpUtil.doPostXml(AppPaymentConstants.APP_WEIXIN_DOWNLOAD_BILL_URL, paramXml);
+//            Excel表格的第一行列名称
             String title = "交易时间,公众账号ID,商户号,子商户号,设备号,微信订单号,商户订单号,用户标识,交易类型,交易状态,付款银行,货币种类,总金额,企业红包金额,微信退款单号,商户退款单号,退款金额,企业红包退款金额,退款类型,退款状态,商品名称,商户数据包,手续费,费率";
+//            Excel表格的统计的列的名称
             String secTitle = "总交易单数,总交易额,总退款金额,总企业红包退款金额,手续费总金额";
             String status = ExportToExcel.generateExcel(result, title, secTitle);
             if (status.equals("SUCCESS")) {
@@ -292,6 +315,7 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
                 return false;
             }
         } catch (Exception e) {
+            //TODO
             logger.error(e.getMessage());
             e.printStackTrace();
             return false;
@@ -320,19 +344,20 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
             Map<String, String> paramMap = JsonUtility.objToMap(upEntity);
             String paramXml = WXPayUtil.generateSignedXml(paramMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY, WXPayConstants.SignType.HMACSHA256);
             String result = HttpUtil.doPostXml(AppPaymentConstants.APP_WEIXNI_DOWNLOAD_FUND_FLOW_URL, paramXml);
+            //TODO 测试输出  待删除
             System.out.println(result);
             try {
                 String title = "记账时间,微信支付业务单号,资金流水单号,业务名称,业务类型,收支类型,收支金额（元）,账户结余（元）,资金变更提交申请人,备注,业务凭证号";
                 String secTitle = "资金流水总笔数,收入笔数,收入金额,支出笔数,支出金额";
                 String status = ExportToExcel.generateExcel(result, title, secTitle);
-                if (status.equals("SUCCESS")){
+                if (status.equals("SUCCESS")) {
                     //成功返回并解析
+                    //TODO
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
+                //TODO
                 //出现错误
-                Map<String,String> resultMap = WXPayUtil.xmlToMap(result);
-
-
+                Map<String, String> resultMap = WXPayUtil.xmlToMap(result);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -359,12 +384,12 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
             Map<String, String> resultMap = WXPayUtil.xmlToMap(result);
             RefundNotifyEntity entity = JsonUtility.json2Object(JsonUtility.obj2Json(resultMap), RefundNotifyEntity.class);
             if (WXPayUtil.isSignatureValid(resultMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY)) {
-                //TODO　验签成功
+                //TODO　验签成功  待删除
                 System.out.println(JsonUtility.obj2Json(entity));
                 logger.info(JsonUtility.obj2Json(entity));
                 return return_success;
             } else {
-                //TODO  验签失败
+                //TODO  验签失败   待删除
                 logger.warn("验签失败！！");
                 System.out.println("验签失败！！");
                 return return_fail;
@@ -396,6 +421,7 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
             String paramXml = WXPayUtil.generateSignedXml(paramMap, AppPaymentConstants.APP_WEIXIN_SECRET_KEY, WXPayConstants.SignType.HMACSHA256);
             System.out.println(paramXml);
             String result = HttpUtil.doPostXml(AppPaymentConstants.APP_WEIXIN_BATCH_QUERY_COMMENT_URL, paramXml);
+            //TODO 测试打印logger 待删除
             logger.info(result);
             System.out.println(result);
 
@@ -406,47 +432,5 @@ public class AppPaymentServiceImpl extends ServiceBase implements AppPaymentServ
         }
 
         return false;
-    }
-
-
-    /**
-     * 返回微信通知的结果
-     *
-     * @param request
-     * @return
-     * @throws IOException
-     */
-    private String getWXReturn(HttpServletRequest request) throws IOException {
-        ByteArrayOutputStream outStream = null;
-        InputStream inStream = null;
-        String result = null;
-        byte[] tempBytes;
-        try {
-            request.setCharacterEncoding("UTF-8");
-            inStream = request.getInputStream();
-            int _buffer_size = 1024;
-            if (inStream != null) {
-                outStream = new ByteArrayOutputStream();
-                tempBytes = new byte[_buffer_size];
-                int count = -1;
-                while ((count = inStream.read(tempBytes, 0, _buffer_size)) != -1) {
-                    outStream.write(tempBytes, 0, count);
-                }
-                outStream.flush();
-                //将流转换成字符串
-                result = new String(outStream.toByteArray(), "UTF-8");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (inStream != null) {
-                inStream.close();
-            }
-            if (outStream != null) {
-                outStream.close();
-            }
-        }
-        return result;
     }
 }

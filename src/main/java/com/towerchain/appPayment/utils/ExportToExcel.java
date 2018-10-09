@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ExportToExcel {
     private static Logger log = LoggerFactory.getLogger(ExportToExcel.class);
+    private static String fileNamePrufix = "../excel/";
 
     public static String generateExcel(String paramStr, String title, String secTitle) {
         System.out.println(paramStr);
@@ -109,18 +110,20 @@ public class ExportToExcel {
         }
 
         String fileName = getXLSXStr().toString();
-        String name = "/usr/local/server/excel/" + fileName + ".xlsx";
+        String name = fileNamePrufix + fileName + ".xlsx";
         File file = new File(name);
         try {
             file.createNewFile();
             // 创建输出流
             FileOutputStream stream = FileUtils.openOutputStream(file);
+
             // 将拼好的Excel写入到文件流
             workbook.write(stream);
             // 关闭输出流
             stream.close();
             bs = FileUtils.readFileToByteArray(file);
         } catch (Exception e) {
+            // TODO
             log.error(e.getMessage());
             e.printStackTrace();
         }
@@ -146,7 +149,7 @@ public class ExportToExcel {
             str.append((year + "-" + month + "-" + day + "-" + hour + "-" + min + "-" + sec + "app支付"));
             return str;
         } catch (Exception e) {
-            return str;
+            return null;
         }
     }
 

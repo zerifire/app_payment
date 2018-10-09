@@ -1,24 +1,12 @@
 package com.towerchain;
 
-import com.towerchain.appPayment.utils.HttpHelper;
 import com.towerchain.appPayment.utils.HttpUtil;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 
 /**
  * Created by TowerChain_T01 on 2018/9/13.
@@ -92,13 +80,13 @@ public class HttpTest {
                         "<trade_type><![CDATA[JSAPI]]></trade_type>" +
                         "<transaction_id><![CDATA[1004400740201409030005092168]]></transaction_id>" +
                         "</xml>";
-        HttpHelper client = new HttpHelper();
-        try {
-          String result =  client.postXml("http://45.113.68.178:8081/receiveAppPaymentMessage", data);
-            System.out.println(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        HttpHelper client = new HttpHelper();
+//        try {
+//          String result =  client.postXml("http://45.113.68.178:8081/receiveAppPaymentMessage", data);
+//            System.out.println(result);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
